@@ -15,9 +15,20 @@ jobs:
         id: branch_name
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
+      - name: Check branch name postfix
+        run: |
+          if [[ $BRANCH_NAME == *"-postfix"* ]]; then
+            echo "Branch name contains postfix"
+          else
+            echo "Branch name does not contain postfix"
+            exit 0
+          fi
+
       - name: Determine parent branch
         id: parent_branch
-        run: echo "PARENT_BRANCH=${BRANCH_NAME%-*}" >> $GITHUB_ENV
+        run: |
+          PARENT_BRANCH=${BRANCH_NAME%-*}
+          echo "PARENT_BRANCH=${PARENT_BRANCH}" >> $GITHUB_ENV
 
       - name: Configure Git user
         run: |
