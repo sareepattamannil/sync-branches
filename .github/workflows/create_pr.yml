@@ -1,19 +1,37 @@
-name: Create Pull Request
+name: Create PR for Postfix Branch
+
 on:
   push:
     branches:
-      - '*-postfix'
+      - '*'
+
 jobs:
   create_pr:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Create Pull Request
+
+      - name: Determine postfix branch
+        id: branch_name
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Check if branch includes postfix
+        id: check_postfix
+        run: |
+          if [[ ${{ env.BRANCH_NAME }} == *"-postfix" ]]; then
+            echo "INCLUDES_POSTFIX=true" >> $GITHUB_ENV
+          else
+            echo "INCLUDES_POSTFIX=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create PR
+        if: steps.check_postfix.outputs.INCLUDES_POSTFIX
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: branch-name-to-trigger-pr
-          title: New Pull Request
-          body: This is an automatically generated pull request.
-          draft: true
+          branch: ${{ env.BRANCH_NAME }}
+          title: "Automated PR for ${{ env.BRANCH_NAME }}"
+          body: |
+            This pull request is automatically generated for the branch ${{ env.BRANCH_NAME }}.

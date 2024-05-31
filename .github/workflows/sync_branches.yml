@@ -3,20 +3,14 @@ on:
   push:
     branches:
       - '*'
-
+# Figure out a way to make this only run when there exists a branch with "parent-postfix" in the name
 jobs:
   check_and_run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      # Parent Branch
-      - name: Get current branch name
-        id: branch_name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        uses: actions/checkout@v3
 
-      # Determine postfix branch name
       - name: Determine postfix branch
         id: parent_branch
         run: echo "CHILD_BRANCH=${GITHUB_REF#refs/heads/}-postfix" >> $GITHUB_ENV
