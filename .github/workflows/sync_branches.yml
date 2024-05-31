@@ -19,5 +19,5 @@ jobs:
       - name: Merge changes into parent branch
         run: |
           git checkout child
-          git merge origin/parent
+          git merge --allow-unrelated-histories origin/parent 
           git push origin child
