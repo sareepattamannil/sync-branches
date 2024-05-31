@@ -10,14 +10,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      
+      # Parent Branch
       - name: Get current branch name
         id: branch_name
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
-      - name: Determine parent branch
+      # Determine postfix branch name
+      - name: Determine postfix branch
         id: parent_branch
-        run: echo "PARENT_BRANCH=${BRANCH_NAME%-*}" >> $GITHUB_ENV
+        run: echo "CHILD_BRANCH=${GITHUB_REF#refs/heads/}-postfix" >> $GITHUB_ENV
 
       - name: Configure Git user
         run: |
@@ -27,9 +29,8 @@ jobs:
       - name: Fetch latest changes
         run: git fetch origin
 
-      - name: Merge changes into parent branch
-        if: ${{ contains(env.BRANCH_NAME, '-postfix') }}
+      - name: Merge changes into child branch
         run: |
-          git checkout ${{ env.BRANCH_NAME }}
-          git merge --allow-unrelated-histories --strategy-option=theirs origin/${{ env.PARENT_BRANCH }}
-          git push origin ${{ env.BRANCH_NAME }}
+          git checkout ${{ env.CHILD_BRANCH }}
+          git merge --allow-unrelated-histories --strategy-option=theirs origin/${{ env.BRANCH_NAME }}
+          git push origin ${{ env.CHILD_BRANCH }}
