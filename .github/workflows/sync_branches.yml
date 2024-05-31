@@ -1,0 +1,23 @@
+name: Sync Parent Branch
+
+on:
+  push:
+    branches:
+      - parent
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Fetch latest changes
+        run: git fetch origin
+
+      - name: Merge changes into parent branch
+        run: |
+          git checkout child
+          git merge origin/parent
+          git push origin child
