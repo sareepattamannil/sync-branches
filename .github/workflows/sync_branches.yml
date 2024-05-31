@@ -29,8 +29,7 @@ jobs:
       - name: Fetch latest changes
         run: git fetch origin
 
-      - name: Merge changes into parent branch
-        if: ${{ contains(env.BRANCH_NAME, '-postfix') }}
+      - name: Merge changes into child branch
         run: |
           git checkout ${{ env.CHILD_BRANCH }}
           git merge --allow-unrelated-histories --strategy-option=theirs origin/${{ env.BRANCH_NAME }}
