@@ -13,11 +13,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Configure Git user
+        run: |
+          git config --global user.email "safderareepattamannil@gmail.com"
+          git config --global user.name "Safder Areepattamannil"
+
       - name: Fetch latest changes
         run: git fetch origin
 
       - name: Merge changes into parent branch
         run: |
           git checkout child
-          git merge origin/parent
+          git merge --allow-unrelated-histories --strategy-option=theirs origin/parent 
           git push origin child
